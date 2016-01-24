@@ -1,0 +1,35 @@
+# http://citforum.ru/operating_systems/gnumake/gnumake_02.shtml
+
+app = distr/cj
+srcs = $(wildcard src/*.c)
+objs = $(patsubst src/%.c,bin/%.o,$(srcs))
+
+
+# command
+
+.PHONY: build clean
+
+build: bin distr ${app}
+
+clean:
+	rm -rf bin distr
+	
+test: build
+	echo '>>' && distr/cj
+
+# build
+
+bin:	
+	mkdir -p bin
+	
+distr:	
+	mkdir -p distr
+
+${app}: $(objs)
+	gcc $^ -o $@
+	
+bin/%.o: src/%.c
+	gcc -c -MD $< -o $@
+	
+include $(wildcard bin/*.d)
+
